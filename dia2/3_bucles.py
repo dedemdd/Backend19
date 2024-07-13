@@ -57,6 +57,50 @@ print('Promedio de notas aprobadas:', promedio_aprobadas)
 print('Promedio de notas desaprobadas:', promedio_desaprobadas)
 
         
+#while 
+
+tope = 10
+actual = 0
+while actual < tope:
+    print(actual)
+    actual += 1    
+
+
+#para cerrar el while de manera abrupta
+
+while True:
+    print('Hola')
+    break
+
+
+for numero in range(5):
+    if numero == 3:
+        continue #Detiene la iteracion actual y no permite que se ejecutte el codigo restante pero no acaba la iteracion como el break
+    print(numero)
+
+
+    def mostrar_alumnos():
+        #si de momento no tenermos una logica planeada para nuestra funcion if, else, for, while, etc o cualquier bloque de codigo podemos usar el pass
+        pass
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
