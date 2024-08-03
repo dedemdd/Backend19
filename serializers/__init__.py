@@ -1,0 +1,1 @@
+from serializers.categoriaSerializer import (CategoriaSerializer, ManualCategoriaSerializer)
