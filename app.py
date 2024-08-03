@@ -25,6 +25,8 @@ Migrate(app, conexion)
 #Agregamos los recursos (controladores)
 api.add_resource(CategoriasController, '/categorias')
 api.add_resource(CategoriaController, '/categoria/<int:id>')
+api.add_resource(ProductosController, '/productos')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
