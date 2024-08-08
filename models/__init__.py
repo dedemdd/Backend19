@@ -4,5 +4,5 @@
 
 from models.categoria import CategoriaModel
 from models.productos import ProductoModel
-from models.usuarios import UsuarioModel
+from models.usuarios import UsuarioModel, TipoUsuario
 
