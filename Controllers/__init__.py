@@ -2,4 +2,4 @@ from Controllers.categoriaControllers import (CategoriasController, CategoriaCon
 
 from Controllers.productoControllers import (ProductosController)
 
-from Controllers.usuarioControllers import (RegistroController, LoginController)
+from Controllers.usuarioControllers import (RegistroController, LoginController, PerfilController)

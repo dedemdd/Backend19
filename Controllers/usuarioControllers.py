@@ -3,8 +3,10 @@ from instancias import conexion
 from flask_restful import Resource, request
 from serializers import RegistroSerializer, LoginSerializer
 from marshmallow.exceptions import ValidationError
-from bcrypt import gensalt, hashpw
+from bcrypt import gensalt, hashpw, checkpw
 from sqlalchemy.exc import IntegrityError
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+
 
 class RegistroController(Resource):
     def post(self):
@@ -74,13 +76,46 @@ class LoginController(Resource):
                     'message': 'El usuario no existe'
                 }, 404
             print(usuarioEncontrado)
-            return {
-                'message': 'Bienvenido'
+            password = usuarioEncontrado.password
+
+            #Converwtimos el passsword a bytes
+            passwordBytes = bytes(password, 'utf-8')
+            passwordEntranteBytes = bytes(dataSerializada.get('password'),'utf-8')
+            validacionPassword = checkpw(passwordEntranteBytes, passwordBytes)
+
+            if validacionPassword == False:
+                return {
+                    'message': 'Credenciales incorrectas'
+                }, 400
+            
+            informacionAdicional = {
+                'correo' : usuarioEncontrado.correo
             }
+            jwt = create_access_token(identity=usuarioEncontrado.id, additional_claims=informacionAdicional)
+            
+            return {
+                'message': 'Bienvenido',
+                'content': jwt
+            }
+        
         except ValidationError as error:
             return {
                 'message': 'Error al hacer el login',
                 'content' : error.args
-            }, 400
+            }
 
 
+class PerfilController(Resource):
+    #indica que ahora este metodo le enemos quw pasar de manera obligatoria el token y este metodo validará que el token sea correcto y que tenga tiempo de vida y sino no podremos ingresar al mentod
+    @jwt_required()
+    def get(self):
+        #devuelve el identificador del token (id de usuario)
+        identificador = get_jwt_identity()
+        print(identificador)
+        usaurioEncontrado = conexion.session.query(UsuarioModel).where(UsuarioModel.id == identificador).first()
+        serializador = RegistroSerializer()
+        resultado = serializador.dump(usaurioEncontrado)    
+
+        return {
+            'content' : resultado
+        }
