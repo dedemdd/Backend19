@@ -2,4 +2,6 @@ from serializers.categoriaSerializer import (CategoriaSerializer, ManualCategori
 
 from serializers.productoSerializar import (ProductoSerializer)
 
-from serializers.usuarioSerializer  import (RegistroSerializer, LoginSerializer)
+from serializers.usuarioSerializer  import (RegistroSerializer, LoginSerializer, 
+                                            ActualizarUsuarioSerializer, 
+                                            CambiarPasswordSerializer)
