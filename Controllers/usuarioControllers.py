@@ -1,11 +1,15 @@
 from models import UsuarioModel
 from instancias import conexion
 from flask_restful import Resource, request
-from serializers import RegistroSerializer, LoginSerializer, ActualizarUsuarioSerializer, CambiarPasswordSerializer
+from serializers import (RegistroSerializer, 
+                         LoginSerializer, 
+                         ActualizarUsuarioSerializer, 
+                         CambiarPasswordSerializer, ResetearPasswordSerializer)
 from marshmallow.exceptions import ValidationError
 from bcrypt import gensalt, hashpw, checkpw
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from utilitarios import enviarCorreo
 
 
 class RegistroController(Resource):
@@ -197,7 +201,50 @@ class CambiarPasswordController(Resource):
                 'content' : error.args
             }, 400
 
+class ResetearPasswordController(Resource):
+    def post(self):
+        data = request.get_json()
+        serializador = ResetearPasswordSerializer() 
+        try:
+            dataSerializada = serializador.load(data)
+            usuarioEncontrado=conexion.session.query(UsuarioModel).where(UsuarioModel.correo == dataSerializada.get('correo')).first()
+           
+            if not usuarioEncontrado:
+                return {
+                    'message': 'El usuario no existe en la base de datos'
+                }, 400
+                
+            textoCorreo = """
+Hola {},
+Has solicitado el cambio de la contraseña de tu cuenta en Tienditapp, si no has sido tu omite este mensaje.
 
+Gracias,
+
+Atentamente.
+
+El equipo mas chevere de todos
+"""
+            htmlCorreo = """
+<html>
+    <body>
+        <p>Hola <b>{}</b>, <br>
+            Has solicitado el cambio de la contraseña de tu cuenta en <b>Tienditapp</b>, si no has sido tu omite este mensaje.<br><br>
+            Gracias,<br><br>
+            Atentamente.<br><br>
+            El equipo mas chevere de todos
+        </p>
+    </body>
+</html>
+"""
+            enviarCorreo(usuarioEncontrado.correo, 'Has solicitado el cambio de tu contraseña', textoCorreo, htmlCorreo)
+            return {
+                  'message': 'Reset completado existosamente'
+            }
+        except ValidationError as error:
+            return {
+                'message': 'Error al resetear el password',
+                'content' : error.args
+            }, 400
 
 
 

@@ -1,4 +1,8 @@
 from math import ceil
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from smtplib import SMTP
+from os import environ
 
 def serializadorPaginacion(total:int, pagina:int, porPagina:int):
     #Operador ternario
@@ -24,3 +28,41 @@ def serializadorPaginacion(total:int, pagina:int, porPagina:int):
             'porPagina' : porPagina,
             'pagina': pagina
             }
+
+def enviarCorreo(destinatario, titulo, texto, html):
+    if not destinatario:
+        print('Es necesario el correo')
+        return
+    
+    emailEmisor =  environ.get('CORREO_EMISOR')
+    passwordEmisor = environ.get('PASSWORD_CORREO_EMISOR')
+
+    #creamos el cuerpo de nuestro email
+    cuerpo = MIMEText(texto, 'plain')
+    cuerpoHtml = MIMEText(html, 'html')
+
+    #Ahora comenzamos a crear la confirguracion de nuestro emaial
+    correo = MIMEMultipart('alternative')
+    #Configuramos el titulo
+    correo['Subject'] = titulo
+    
+    correo['To'] = destinatario
+
+    #Adjuntamos el cuerpo de nuestro correo
+    correo.attach(cuerpo)
+    correo.attach(cuerpoHtml)
+
+    #creamos la conexion que se encargara de realizar el envio del correo 
+    #587 es el puerto estandar para los servidores de correo
+    emisor = SMTP(environ.get('CORREO_HOST'), 587)
+    emisor.starttls()
+
+    emisor.login(emailEmisor, passwordEmisor)
+    
+    emisor.sendmail(from_addr=emailEmisor, to_addrs=destinatario, msg=correo.as_string())
+
+    emisor.quit()
+    
+    print('Correo enviado existosamente')
+    
+    

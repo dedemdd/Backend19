@@ -29,3 +29,6 @@ class ActualizarUsuarioSerializer(Schema):
 class CambiarPasswordSerializer(Schema):
     passwordAntigua = fields.String(required = True)
     passwordNueva = fields.String(required = True, validate=validate.Regexp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&?!])[A-Za-z\d@#$%^&?!]{6,}$'))
+
+class ResetearPasswordSerializer(Schema):
+    correo = fields.Email(required=True)
