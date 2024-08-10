@@ -6,4 +6,5 @@ from Controllers.usuarioControllers import (RegistroController, LoginController,
                                             PerfilController, 
                                             CambiarPasswordController, 
                                             ResetearPasswordController,
-                                            ConfirmarResetTokenController)
+                                            ConfirmarResetTokenController,
+                                            ConfirmarResetPasswordController)

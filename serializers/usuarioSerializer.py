@@ -35,3 +35,7 @@ class ResetearPasswordSerializer(Schema):
 
 class ConfirmarResetTokenSerializer(Schema):
     token = fields.String(required=True)
+    
+class ConfirmarResetPasswordSerializer(Schema):    
+    token = fields.String(required=True)
+    passwordNueva = fields.String(required = True, validate=validate.Regexp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&?!])[A-Za-z\d@#$%^&?!]{6,}$'))
