@@ -32,3 +32,6 @@ class CambiarPasswordSerializer(Schema):
 
 class ResetearPasswordSerializer(Schema):
     correo = fields.Email(required=True)
+
+class ConfirmarResetTokenSerializer(Schema):
+    token = fields.String(required=True)

@@ -4,4 +4,5 @@ from serializers.productoSerializar import (ProductoSerializer)
 
 from serializers.usuarioSerializer  import (RegistroSerializer, LoginSerializer, 
                                             ActualizarUsuarioSerializer, 
-                                            CambiarPasswordSerializer, ResetearPasswordSerializer)
+                                            CambiarPasswordSerializer, 
+                                            ResetearPasswordSerializer, ConfirmarResetTokenSerializer)

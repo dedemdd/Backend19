@@ -4,13 +4,14 @@ from flask_restful import Resource, request
 from serializers import (RegistroSerializer, 
                          LoginSerializer, 
                          ActualizarUsuarioSerializer, 
-                         CambiarPasswordSerializer, ResetearPasswordSerializer)
+                         CambiarPasswordSerializer, ResetearPasswordSerializer,
+                         ConfirmarResetTokenSerializer)
 from marshmallow.exceptions import ValidationError
 from bcrypt import gensalt, hashpw, checkpw
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from utilitarios import enviarCorreo
-
+from utilitarios import enviarCorreo, encriptarTexto, desencriptarTexto
+from json import loads, dumps
 
 class RegistroController(Resource):
     def post(self):
@@ -214,17 +215,40 @@ class ResetearPasswordController(Resource):
                     'message': 'El usuario no existe en la base de datos'
                 }, 400
                 
+            textoAEncriptar = {
+                'correo': usuarioEncontrado.correo
+                
+            }
+            #dumps en el modulo json lo que hace en que convierte de un diccionario a un string
+            token = encriptarTexto(dumps(textoAEncriptar))
+            url = f'http://localhost:5000/reset-password-frontend?token={token}'            
+            
             textoCorreo = """
 Hola {},
-Has solicitado el cambio de la contraseña de tu cuenta en Tienditapp, si no has sido tu omite este mensaje.
-
+Has solicitado el cambio de la contraseña de tu cuenta en Tienditapp, haz click en el siguiente <a href="{}">link</a> para proceder
+<br>
+<br>
+Si no has sido tu omite este mensaje.
+<br>
+<br>
 Gracias,
-
+<br>
+<br>
 Atentamente.
-
+<br>
+<br>
 El equipo mas chevere de todos
-"""
+""".format(usuarioEncontrado.nombre, url)
+
+            
+            plantillaCorreo = open('plantilla_mensajeria.html', 'r')
+            textoPlantilla = plantillaCorreo.read()
+
+            textoResultado = textoPlantilla.replace('cuerpo_correo', textoCorreo)
+            
             htmlCorreo = """
+            #sirve para leer archivos del proyecto
+            
 <html>
     <body>
         <p>Hola <b>{}</b>, <br>
@@ -236,7 +260,7 @@ El equipo mas chevere de todos
     </body>
 </html>
 """
-            enviarCorreo(usuarioEncontrado.correo, 'Has solicitado el cambio de tu contraseña', textoCorreo, htmlCorreo)
+            enviarCorreo(usuarioEncontrado.correo, 'Has solicitado el cambio de tu contraseña', textoCorreo, textoResultado)
             return {
                   'message': 'Reset completado existosamente'
             }
@@ -246,6 +270,23 @@ El equipo mas chevere de todos
                 'content' : error.args
             }, 400
 
+class ConfirmarResetTokenController(Resource):
+    def post(self):
+        data = request.get_json()
+        serializador = ConfirmarResetTokenSerializer()
+        try:
+            dataValidada = serializador.load(data)
+            #loads > convierte un string a diccionario, siempre y cuando cumpla con el formato '{"llave":"valor"}'
+            informacion = loads(desencriptarTexto(dataValidada.get('token')))
 
+            print(informacion)
 
+            return {
+                'message': ''
+            }
 
+        except ValidationError as error:
+            return {
+                'message': 'Error al hacer el request',
+                'content' : error.args
+            }, 400

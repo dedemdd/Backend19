@@ -2,4 +2,8 @@ from Controllers.categoriaControllers import (CategoriasController, CategoriaCon
 
 from Controllers.productoControllers import (ProductosController)
 
-from Controllers.usuarioControllers import (RegistroController, LoginController, PerfilController, CambiarPasswordController, ResetearPasswordController)
+from Controllers.usuarioControllers import (RegistroController, LoginController, 
+                                            PerfilController, 
+                                            CambiarPasswordController, 
+                                            ResetearPasswordController,
+                                            ConfirmarResetTokenController)
