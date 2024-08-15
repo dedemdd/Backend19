@@ -19,7 +19,7 @@ class Golosinas(models.Model):
     id = models.AutoField(primary_key=True, unique=True, null=False)
     nombre = models.TextField(null=False)
     precio = models.FloatField()
-    imagen = models.ImageField(upload_to='/imagenes', null=True)
+    imagen = models.ImageField(upload_to='imagenes', null=True)
     habilitado = models.BooleanField(default=True)
 
     #Relacion con Categoria
@@ -38,5 +38,5 @@ class Golosinas(models.Model):
         ordering = ['nombre', 'precio']
         #Sirve para crear unicidad enrte dos o mas columnas
         #jamas el nombre y el precio pueden tener el mismo valor juntos
-        
+
         unique_together = ('nombre', 'precio')
