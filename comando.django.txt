@@ -1,3 +1,4 @@
 django-admin NOMBRE_PROYECTO > creara el proyecto dentro de la carpeta con ese nombre
 django-admin startapp NOMBRE_APLICACION > creara el proyecto dentro del proyecto
 python manage.py makemigrations gNOMBRE_APP lees los modelos
+python manage.py showmigrations > muestra todas las makemigrations del proyecto y las que estan ejecutadas se pondra un [x] y las que []
