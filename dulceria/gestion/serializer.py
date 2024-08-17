@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Categoria
+from .models import Categoria, Golosinas
 
 class CategoriaSerializer(ModelSerializer):
     class Meta:
@@ -13,3 +13,7 @@ class CategoriaSerializer(ModelSerializer):
 
         # NOTA: no se puede utilizart el fields y el exclude al mismo tiempo, es uno o el otro
 
+class GolosinaSerializer(ModelSerializer):
+    class Meta:
+        model = Golosinas
+        fields = '__all__'
