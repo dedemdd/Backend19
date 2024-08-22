@@ -32,7 +32,7 @@ class UsuarioManager(BaseUserManager):
         nuevo_usuario.save()
 
 
-class Usuario(models.Model):
+class Usuario(AbstractBaseUser):
     #Al crear un enum en la base de datos tenemos que indicar cuales son su opcopnes con una lista de listas
 
     #La primera será usada para guardar en la base de datos
