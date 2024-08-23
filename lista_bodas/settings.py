@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from os import environ
+from pathlib import Path
+from dotenv import load_dotenv
+from cloudinary import config
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -76,11 +81,15 @@ WSGI_APPLICATION = 'lista_bodas.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-from os import environ
-from pathlib import Path
-from dotenv import load_dotenv
 
 load_dotenv()
+
+config(
+    cloud_name=environ.get('CLOUDINARY_NAME'),
+    api_key=environ.get('CLOUDINARY_API_KEY'),
+    api_secret=environ.get('CLOUDINARY_API_SECRET'))
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASES = {
     'default': {
@@ -89,7 +98,7 @@ DATABASES = {
         'USER': environ.get('DB_USER'),
         'PASSWORD': environ.get('DB_PASSWORD'),
         'HOST': environ.get('DB_HOST'),
-        'PORT': environ.get('DB_PORT'),
+        'PORT': environ.get('DB_PORT')
     }
 }
 
@@ -138,3 +147,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Esta variable sirve para indicar que modelo de usaurio usaremos
 AUTH_USER_MODEL = 'gestion.Usuario'
+
+
+#Van todos las configuraciones del django rest framework, aca puede ir autenticaciones, paginanciones, tamañao de paginas, filtrados, entre otros
+#https://django-rest-framework-simplejwt.readthedocs.io/en/latest/
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1)
+}
