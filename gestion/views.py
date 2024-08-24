@@ -17,6 +17,10 @@ from .models import Usuario, ListaNovio
 from .serializer import RegistroSerializer, UsuarioSerializer, ListaNoviosCreacionSerializer, ListaNoviosSerializer
 from .permisions import EsAdministrador
 from django.db import transaction
+from cloudinary import utils
+from os import environ
+from datetime import datetime
+
 
 @api_view(http_method_names=['POST'])
 def crearUsuario(request):
@@ -81,7 +85,9 @@ class ListaNoviosAPIView(APIView):
                                          'novio').get('apellido'),
                                      correo=serializador.validated_data.get(
                                          'novio').get('correo'),
-                                     tipoUsuario='NOVIO')
+                                     tipoUsuario='NOVIO',
+                                     numeroTelefonico=serializador.validated_data.get('novio').get('numeroTelefonico'))
+                                     
 
                 nuevoNovio.set_password(
                     serializador.validated_data.get('novio').get('password'))
@@ -91,7 +97,10 @@ class ListaNoviosAPIView(APIView):
                                          'novia').get('apellido'),
                                      correo=serializador.validated_data.get(
                                          'novia').get('correo'),
-                                     tipoUsuario='NOVIO')
+                                     tipoUsuario='NOVIO',
+                                     numeroTelefonico=serializador.validated_data.get(
+                                         'novia').get('numeroTelefonico'))
+
 
                 nuevoNovia.set_password(
                     serializador.validated_data.get('novia').get('password'))
@@ -121,5 +130,50 @@ class ListaNoviosAPIView(APIView):
             'content': serializador.data
         })
         
+
+class RegalosAPIView(APIView):
+    #Crear un serializador para tener la siguiente informacion de crear un regalo
+    #en el campo de la imagen, enviar la url que clouddinary nos brinda, la segura
+    #solamente los novios pueden agregar regalos y buscar la lista de novios del novio o novia el cual se quiere agregar el regalo
+    def post(self, request):
+        
+        return Response(data={
+            'message': 'Regalo creado exitosamente'
+        }, status=status.HTTP_201_CREATED)
+    
+    def get(self, request):
+        #retornar todos los regalos del novio que actualmente esta logueados
+
+        #Select * from lista_novios where novio_id =1 limit 1;
+        listaNovioEncontrado = ListaNovio.objects.filter(novio = 1).first()
+        #regalos = Regalo.objects.filter(listaNovio = listaNovioEncontrado.id).all()
+
+        return Response(data={
+            'message': ''
+        })
+
+@api_view(http_method_names=['POST'])
+def generarCloudinaryUrl(request):
+    timestamp = datetime.now().timestamp()
+    signature = utils.api_sign_request(
+        {'timestamp': timestamp}, environ.get('CLOUDINARY_API_SECRET'))
+
+    url = f'https://api.cloudinary.com/v1_1/{environ.get('CLOUDINARY_NAME')}/image/upload?api_key={environ.get('CLOUDINARY_API_KEY')}&timestamp={timestamp}&signature={signature}'
+    return Response({
+        'content': url
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

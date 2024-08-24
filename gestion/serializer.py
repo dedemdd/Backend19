@@ -38,6 +38,10 @@ class ListaNoviosCreacionSerializer(serializers.Serializer):
     novia = NovioSerializer(required=True)
 
 class ListaNoviosSerializer(serializers.ModelSerializer):
+    #Si queremos definir atrinutos a mostrar (no todos) de los atributos de los modelos anidados
+    novio = UsuarioSerializer()
+    #Si queremos cambiar el nombre del atreinbuto por otro y seguir utilizando el valor del aatributo antoguo, tenemos que utilizar el parametro source e indicar que atributo usaremos para crear en el seralizador el nuevo atrubutoi. No se puede cololcar el mismo nombr ey el source
+    laNovia = UsuarioSerializer(source='novia')
     class Meta:
         model = ListaNovio
         fields = '__all__'
@@ -45,7 +49,7 @@ class ListaNoviosSerializer(serializers.ModelSerializer):
         #Si en nuestro modelo actual tenemos llaves foraneas (FK) podemos acceder a su informacion adyacente mediante la profunidad, en base al nuemero que pongamos ingresaremos a cuentos veinos tengamas
         #depth = 1 ingresara la lista de novios y a los novios
         #depth = 2 ingresara la lista de novios y a los novios y a cada novia tendra la lista de novios
-        depth = 1
+       # depth = 1
 
       
 
