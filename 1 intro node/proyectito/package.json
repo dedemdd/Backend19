@@ -1,0 +1,15 @@
+{
+    "name": "proyectitor",
+    "version": "1.0.0",
+    "author": {
+        "name": "Denys Jaramillo"
+    },
+    "license":"UNLICENSED",
+    "engines": {
+        "node": "22.7.0",
+        "npm" :"10.7.0"
+    },
+    "scripts": {
+        "saludar": "echo Hola"
+    }
+}
