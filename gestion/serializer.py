@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario, ListaNovio
+from .models import Usuario, ListaNovio, Regalo
 
 
 #ModelSerializar > sirve para crear un serializar Pero basandonos en un moldeo de nuestro Models, es decir, utilizara todos los atributos (Coolumnas) del modelo para hacer las validaciones 
@@ -51,7 +51,11 @@ class ListaNoviosSerializer(serializers.ModelSerializer):
         #depth = 2 ingresara la lista de novios y a los novios y a cada novia tendra la lista de novios
        # depth = 1
 
-      
+class RegaloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Regalo
+        fields = '__all__'
+
 
 
 

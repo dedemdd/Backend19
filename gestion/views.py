@@ -13,8 +13,8 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 
-from .models import Usuario, ListaNovio
-from .serializer import RegistroSerializer, UsuarioSerializer, ListaNoviosCreacionSerializer, ListaNoviosSerializer
+from .models import Usuario, ListaNovio, Regalo
+from .serializer import RegistroSerializer, UsuarioSerializer, ListaNoviosCreacionSerializer, ListaNoviosSerializer,RegaloSerializer
 from .permisions import EsAdministrador
 from django.db import transaction
 from cloudinary import utils
@@ -132,21 +132,38 @@ class ListaNoviosAPIView(APIView):
         
 
 class RegalosAPIView(APIView):
-    #Crear un serializador para tener la siguiente informacion de crear un regalo
-    #en el campo de la imagen, enviar la url que clouddinary nos brinda, la segura
-    #solamente los novios pueden agregar regalos y buscar la lista de novios del novio o novia el cual se quiere agregar el regalo
-    def post(self, request):
-        
-        return Response(data={
-            'message': 'Regalo creado exitosamente'
-        }, status=status.HTTP_201_CREATED)
-    
-    def get(self, request):
-        #retornar todos los regalos del novio que actualmente esta logueados
+    permission_classes = [IsAuthenticatedOrReadOnly, EsNovio]
 
-        #Select * from lista_novios where novio_id =1 limit 1;
-        listaNovioEncontrado = ListaNovio.objects.filter(novio = 1).first()
-        #regalos = Regalo.objects.filter(listaNovio = listaNovioEncontrado.id).all()
+    def post(self, request):
+        # TAREA!
+        # Crear un serializador para obtener la informacion de crear un regalo
+        # en el campo de la imagen enviar la url que cloudinary nos brinda (la segura)
+        # Solamente LOS NOVIOS PUEDEN agregar regalos y buscar la lista de novios del novio o novia en la cual se quiere agregar el regalo
+        print(request.user)
+        # SELECT * FROM lista_novios WHERE novio_id = '...' OR novia_id = '...';
+        listaEncontrada = ListaNovio.objects.filter(
+            Q(novio=request.user) | Q(novia=request.user))
+
+        print(listaEncontrada)
+        serializador = RegaloSerializer(data=request.data)
+        if serializador.is_valid():
+
+            return Response(data={
+                'message': 'Regalo creado exitosamente'
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={
+                'message': 'Hubo un error ',
+                'content': serializador.errors
+            })
+
+    def get(self, request):
+        # Retornar todos los regalos del novio que actualmente esta logeado
+
+        # SELECT * FROM lista_novios WHERE novio_id = 1 LIMIT 1 ;
+        listNovioEncontrado = ListaNovio.objects.filter(novio=1).first()
+        regalos = Regalo.objects.filter(
+            listaNovio=listNovioEncontrado.id).all()
 
         return Response(data={
             'message': ''
