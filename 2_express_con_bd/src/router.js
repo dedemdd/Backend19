@@ -1,7 +1,14 @@
 import { Router } from "express";
-import { crearReceta } from "./controllers/recetacontrollers.js";
+import { crearReceta, listarRecetas, actualizarReceta } from "./controllers/recetacontrollers.js";
 
 export const enrutador = Router();
 
-enrutador.post('/recetas', crearReceta);
+//cuando utulizamos el mismo endpoint para dos o mas controladores, se recomienda agruaprlos
+//enrutador.post('/recetas', crearReceta);
+//enrutador.get('/recetas', listarRecetas);
+enrutador.route('/recetas').post(crearReceta).get(listarRecetas);
+enrutador.route('/receta/:id').put(actualizarReceta);
+
+
+
 
