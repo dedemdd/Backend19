@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  //url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL1")
+  
+}
+
+model Receta {
+  //@id indica que será llave primaria que tipo dato será
+  //@db > sirve para indicar con mayor precision 
+  //datatype? > indica que la columna puede tener valores nulos
+  //@default > indica cual será el valor en el caso de que el usuario no me lo envie al momento de crear /actualiza
+  id          Int      @id @default(autoincrement())
+  nombre      String   @db.Text
+  descripcion String?
+  habilitado  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  //Relaciones
+  //cuando se coloca corchetes, significa que sera la relacion de 1 a muchos
+  ingredientes  Ingrediente[]
+  preparaciones Preparacion[]
+
+  @@map("recetas")
+}
+
+//Relaciones
+
+//Como se llamraá la tabla en la bd
+//Siempre que queramos modificar algo de la tbla se unsa el @@ y si es algo de relacion a la columna un @
+
+model Ingrediente {
+  id     Int    @id @default(autoincrement())
+  titulo String
+
+  recetaId Int    @map("receta_id")
+  receta   Receta @relation(fields: [recetaId], references: [id])
+
+  @@map("ingredientes")
+}
+
+model Preparacion {
+  id          Int    @id @default(autoincrement())
+  orden       Int
+  descripcion String
+  //@updatedAT > sirve para que automaticamente cuando se modifique un registro de la bd se cambie su valor a la hora actual
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  recetaId Int    @map("receta_id")
+  receta   Receta @relation(fields: [recetaId], references: [id])
+
+  //@@unique > en djgango seria com el unique_together sirve para indicar dos o mas columnas cuyos valores juntos no se pueden repetir
+  @@unique([orden, recetaId])
+  @@map("preparaciones")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

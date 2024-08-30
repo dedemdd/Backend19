@@ -19,5 +19,5 @@ servidor.post('/registro', (req, res)=> {
 })
 
 servidor.listen(3000, ()=> {
-    console.log('Servidor levantado existosamente');
+    console.log('Servidor de express levantado existosamente');
 });
