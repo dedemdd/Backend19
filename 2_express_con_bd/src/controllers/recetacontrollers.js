@@ -64,3 +64,45 @@ export const actualizarReceta = async (req, res) => {
         content: recetaActualizada,
     });
 };
+
+export const eliminarReceta = async (req, res) => {
+    const { id } = req.params;
+
+    const recetaEncontrada = await prisma.receta.findUniqueOrThrow({
+        where: { id: +id },
+        select: { id: true }
+    });
+
+    const resultado = await prisma.receta.delete({
+        where: { id: recetaEncontrada.id },
+    });
+
+    return res.json({
+        message: "Receta eliminada con exitosamente",
+        content: resultado,
+    });
+}
+
+export const listarRecetaPorId = async (req, res)=> {
+    const { id } = req.params;
+
+    const recetaEncontrada = await prisma.receta.findFirstOrThrow({
+        where: { id: +id },     
+        //incluir modelos anidados
+        include: {
+            ingredientes: true,
+            preparaciones: {
+                orderBy: {
+                    orden: 'asc'
+                }
+            },
+        }   
+    });
+
+    return res.json({
+       content: recetaEncontrada,
+    });
+}
+
+
+
