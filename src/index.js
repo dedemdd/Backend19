@@ -1,14 +1,37 @@
-import express from 'express';
-import morgan from 'morgan';
-
+import express from "express";
+import morgan from "morgan";
+import { rutas } from "./router.js";
+import AWS from 'aws-sdk'
+import cors from 'cors';
 
 const servidor = express();
-const PORT =process.env.PORT
+servidor.use(cors({ origin: "*"}));
 
-//Agregamos logger de las request de nuestro servidor
-servidor.use(morgan('common'));
+//Basta con que inicialice mi cliente de AWS al comienzo, para poder utilizar donde sea
+AWS.config.update({
+  region: process.env.AWS_BUCKET_REGION,
+  credentials: { 
+      accessKeyId: process.env.AWS_ACCESS_KEY,
+      secretAccessKey: process.env.AWS_SECRET_KEY
+  },
+});
 
-servidor.listen(PORT, ()=> {
-    console.log(`Servidor de express levantado en el puerto ${PORT}`);
+const errorHandler = (error, req, res, next) => {
+  res.status(400).json({
+    message: "Error al realizar la operacion",
+    content: error.message,
+  });
+};
+
+// Agregamos logger de los request de nuestro servidor
+servidor.use(morgan("common"));
+
+const PORT = process.env.PORT;
+servidor.use(express.json());
+servidor.use(rutas);
+servidor.use(errorHandler);
+
+servidor.listen(PORT, () => {
+  console.log(`Servidor corriendo exitosamente en el puerto ${PORT}`);
 });
 
